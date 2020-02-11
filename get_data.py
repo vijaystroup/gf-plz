@@ -69,7 +69,7 @@ def last_index(rating):
     last_n = listdir(f'data/{rating}')
     last_n.sort()
     if last_n == [] or last_n[0] == '.DS_Store':
-        last_n = 0
+        last_n = -1
     else:
         last_n = last_n[-1].split('_')[1][-5:]
 
