@@ -7,31 +7,19 @@ from time import sleep
 
 
 def get_data(controller):
+    sleep(1)
     try:
-        controller.home_screen_mobile()
+        data_source = controller.driver.find_element_by_xpath(
+            '//*[@id="content"]/div/div[1]/div/div/main/div/div[1]/div/div[1]/div[3]/div[1]/div[1]/div/div[1]/div/div'
+        )
+        data_name = controller.driver.find_element_by_xpath(
+            '//*[@id="content"]/div/div[1]/div/div/main/div/div[1]/div/div[1]/div[3]/div[6]/div/div[1]/div/div/span'
+        )
+        data_name = data_name.get_attribute('innerHTML')
+        data_url = data_source.value_of_css_property('background-image').split('"')[1]
+        rating = input(f'Rating {data_name} [HOT/n]: ')
     except Exception:
-        try:
-            controller.tinder_gold()
-        except Exception:
-            try:
-                controller.match()
-            except Exception:
-                try:
-                    controller.match()
-                except Exception:
-                    try:
-                        data_source = controller.driver.find_element_by_xpath(
-                            '//*[@id="content"]/div/div[1]/div/div/main/div/div[1]/div/div[1]/div[3]/div[1]/div[1]/div/div[1]/div/div'
-                        )
-                        data_name = controller.driver.find_element_by_xpath(
-                            '//*[@id="content"]/div/div[1]/div/div/main/div/div[1]/div/div[1]/div[3]/div[6]/div/div[1]/div/div/span'
-                        )
-                        data_name = data_name.get_attribute('innerHTML')
-                        data_url = data_source.value_of_css_property('background-image').split('"')[1]
-                        rating = input(f'Rating {data_name} [HOT/n]: ')
-                    except Exception:
-                        controller.swipe_left_mobile()
-                        get_data(controller)
+        save_data(controller)
 
     return (data_url, rating)
 
@@ -82,4 +70,4 @@ if __name__ == '__main__':
     controller.driver.set_window_size(640, 768)  # MacBook 12" halfscreen
     controller.driver.set_window_position(0, 0)
     sleep(5)
-    # save_data(controller)
+    save_data(controller)

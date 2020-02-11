@@ -17,7 +17,7 @@ class Controller():
     def login(self):
         try:
             self.driver.get('https://www.tinder.com')
-
+            sleep(1)
             login_btn = self.driver.find_element_by_xpath(
                 '/html/body/div[1]/div/div[1]/div/main/div[1]/div/div/header/div[1]/div[2]/div/button/span'
             )
