@@ -4,10 +4,10 @@ from io import BytesIO
 from os import listdir
 from urllib import request
 from time import sleep
+from sys import exit
 
 
 def get_data(controller):
-    sleep(1)
     try:
         data_source = controller.driver.find_element_by_xpath(
             '//*[@id="content"]/div/div[1]/div/div/main/div/div[1]/div/div[1]/div[3]/div[1]/div[1]/div/div[1]/div/div'
@@ -19,7 +19,19 @@ def get_data(controller):
         data_url = data_source.value_of_css_property('background-image').split('"')[1]
         rating = input(f'Rating {data_name} [HOT/n]: ')
     except Exception:
-        save_data(controller)
+        try:  # for people with a school defined
+            data_source = controller.driver.find_element_by_xpath(
+                '//*[@id="content"]/div/div[1]/div/div/main/div/div[1]/div/div[1]/div[3]/div[1]/div[1]/div/div[1]/div/div'
+            )
+            data_name = controller.driver.find_element_by_xpath(
+                '//*[@id="content"]/div/div[1]/div/div/main/div/div[1]/div/div[1]/div[3]/div[7]/div/div[1]/div/div/span'
+            )
+            data_name = data_name.get_attribute('innerHTML')
+            data_url = data_source.value_of_css_property('background-image').split('"')[1]
+            rating = input(f'Rating {data_name} [HOT/n]: ')
+        except Exception:
+            print('Random error crash')
+            exit()
 
     return (data_url, rating)
 

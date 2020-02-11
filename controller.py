@@ -2,7 +2,6 @@ from selenium import webdriver
 from time import sleep
 from login_info import username, password
 from sys import exit
-from os import system
 
 
 class Controller():
