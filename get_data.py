@@ -43,15 +43,13 @@ def save_data(controller):
     if rating == '':
         n = last_index('hot') + 1
         f_name = f'data/hot/image_{str(n).zfill(5)}_h.jpg'
-        with open(f_name, 'wb') as im:
-            im.write(im_source.read())
-            im_adjust(f_name)
     else:
         n = last_index('not_hot') + 1
         f_name = f'data/not_hot/image_{str(n).zfill(5)}_nh.jpg'
-        with open(f_name, 'wb') as im:
-            im.write(im_source.read())
-            im_adjust(f_name)
+
+    with open(f_name, 'wb') as im:
+        im.write(im_source.read())
+        im_adjust(f_name)
 
     controller.swipe_left_mobile()
     save_data(controller)
@@ -68,7 +66,7 @@ def im_adjust(im):
 def last_index(rating):
     last_n = listdir(f'data/{rating}')
     last_n.sort()
-    if last_n == [] or last_n[0] == '.DS_Store':
+    if last_n[-1] == '' or last_n[-1] is None or last_n[-1] == '.DS_Store':
         last_n = -1
     else:
         last_n = last_n[-1].split('_')[1][-5:]
