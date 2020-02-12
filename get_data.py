@@ -47,9 +47,12 @@ def save_data(controller):
         n = last_index('not_hot') + 1
         f_name = f'data/not_hot/image_{str(n).zfill(5)}_nh.jpg'
 
-    with open(f_name, 'wb') as im:
-        im.write(im_source.read())
-        im_adjust(f_name)
+    if n > 2500:  # dataset containg 2500 pics of hot and 2500 pics of not hot
+        print(f'Exceeding datum amount {f_name}')
+    else:
+        with open(f_name, 'wb') as im:
+            im.write(im_source.read())
+            im_adjust(f_name)
 
     controller.swipe_left_mobile()
     save_data(controller)
