@@ -1,9 +1,9 @@
+import os
 from json import loads
-from os import path
 
-cwd = path.dirname(path.realpath(__file__))
+path = os.path.dirname(__file__)
 
-with open(f'{cwd}/creds.json', mode='r') as f:
+with open(f'{path}/creds.json', mode='r') as f:
     data = loads(f.read())
     username = data['username']
     password = data['password']

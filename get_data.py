@@ -1,10 +1,12 @@
+import os
 from controller import Controller
 from PIL import Image
 from io import BytesIO
-from os import listdir
 from urllib import request
 from time import sleep
 from sys import exit
+
+path = path.dirname(__file__)
 
 
 def get_data(controller):
@@ -42,10 +44,10 @@ def save_data(controller):
 
     if rating == '':
         n = last_index('hot') + 1
-        f_name = f'data/hot/image_{str(n).zfill(5)}_h.jpg'
+        f_name = f'{path}/data/hot/image_{str(n).zfill(5)}_h.jpg'
     else:
         n = last_index('not_hot') + 1
-        f_name = f'data/not_hot/image_{str(n).zfill(5)}_nh.jpg'
+        f_name = f'{path}/data/not_hot/image_{str(n).zfill(5)}_nh.jpg'
 
     if n > 2500:  # dataset containg 2500 pics of hot and 2500 pics of not hot
         print(f'Exceeding datum amount {f_name}')
@@ -67,7 +69,7 @@ def im_adjust(im):
 
 
 def last_index(rating):
-    last_n = listdir(f'data/{rating}')
+    last_n = os.listdir(f'{path}data/{rating}')
     last_n.sort()
     if last_n[-1] == '' or last_n[-1] is None or last_n[-1] == '.DS_Store':
         last_n = -1

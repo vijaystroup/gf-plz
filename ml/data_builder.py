@@ -1,5 +1,5 @@
 """ The data_builder module contains the class DataBuilder which is used to
-save all our raw data to a multi-dimensional list we can load it to train the
+save all our raw data to a multi-dimensional list we can load to train the
 neural network.
 """
 
@@ -20,8 +20,10 @@ class DataBuilder:
         data. The LABELS variable indicates when using np.eye(2), vector <1, 0>
         will equate to data/hot whereas vector <0, 1> will equate to data/not_hot.
         """
-        self.HOT = '../data/hot'
-        self.NOT_HOT = '../data/not_hot'
+
+        self.path = os.path.dirname(__file__)
+        self.HOT = f'{self.path}/../data/hot'
+        self.NOT_HOT = f'{self.path}/../data/not_hot'
         self.LABELS = {self.HOT: 0, self.NOT_HOT: 1}
         self.data = []
         self.hot_count = 0
@@ -32,6 +34,7 @@ class DataBuilder:
         proper vector. Then, we shuffle our data so we increase randomness from
         the ai. Finally, we save the list as a numpy file and print our metrics.
         """
+
         for label in self.LABELS:
             for f in tqdm(os.listdir(label)):
                 try:
@@ -49,7 +52,7 @@ class DataBuilder:
                     print(f'Error: {e}')
         
         np.random.shuffle(self.data)
-        np.save('data.npy', self.data)
+        np.save(f'{self.path}/data.npy', self.data)
         print(f'Hotties: {self.hot_count}\tNot Hotties: {self.not_hot_count}\n'
               f'Total: {self.hot_count + self.not_hot_count}')
 
