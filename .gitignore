@@ -1,0 +1,6 @@
+.*
+*.log
+creds.json
+data
+!data.bz2
+!.gitignore
