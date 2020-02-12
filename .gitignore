@@ -2,5 +2,6 @@
 *.log
 creds.json
 data
+data.npy
 !data.bz2
 !.gitignore
