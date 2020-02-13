@@ -18,11 +18,12 @@ class Model(nn.Module):
         x = F.max_pool2d(F.relu(self.conv3(x)), (5, 5))
 
         # 2048 is flattened tensor of [1, 256, 4, 2] from previous output
-        self.fc1 = nn.Linear(2048, 512)
+        # print(x.shape)
+        self.fc1 = nn.Linear(1024, 512)
         self.fc2 = nn.Linear(512, 2)
 
     def forward(self, x):
-        x = x.view(-1, 2048)
+        x = x.view(-1, 1024)
         x = F.relu(self.fc1(x))
         x = self.fc2(x)
         return F.softmax(x, dim=1)

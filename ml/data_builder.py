@@ -7,6 +7,7 @@ import os
 import numpy as np
 from PIL import Image
 from tqdm import tqdm
+import matplotlib.pyplot as plt
 
 
 class DataBuilder:
@@ -28,11 +29,13 @@ class DataBuilder:
         self.data = []
         self.hot_count = 0
         self.not_hot_count = 0
-    
+
     def generator(self):
         """ The generator method opens data, and saves it to a list with their
         proper vector. Then, we shuffle our data so we increase randomness from
         the ai. Finally, we save the list as a numpy file and print our metrics.
+        Some images turned out to be 640x640, so images with a height of 640
+        will be padded to match the normal 640x800 size.
         """
 
         for label in self.LABELS:
@@ -40,9 +43,18 @@ class DataBuilder:
                 try:
                     f_path = os.path.join(label, f)
                     im = Image.open(f_path)
-                    self.data.append(
-                        [np.array(im), np.eye(2)[self.LABELS[label]]]
-                    )
+                    # padding images that are 640x640
+                    width, height = im.size
+                    if height < 800:
+                        im_adj = Image.new(im.mode, (640, 800))
+                        im_adj.paste(im)
+                        self.data.append(
+                            [np.array(im_adj), np.eye(2)[self.LABELS[label]]]
+                        )
+                    else: 
+                        self.data.append(
+                            [np.array(im), np.eye(2)[self.LABELS[label]]]
+                        )
 
                     if label == self.HOT:
                         self.hot_count += 1
@@ -50,7 +62,7 @@ class DataBuilder:
                         self.not_hot_count += 1
                 except Exception as e:
                     print(f'Error: {e}')
-        
+
         np.random.shuffle(self.data)
         np.save(f'{self.path}/data.npy', self.data)
         print(f'Hotties: {self.hot_count}\tNot Hotties: {self.not_hot_count}\n'
