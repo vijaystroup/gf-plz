@@ -11,20 +11,16 @@ class Model(nn.Module):
         self.conv2 = nn.Conv2d(64, 128, 5)
         self.conv3 = nn.Conv2d(128, 256, 5)
 
-        self.fc1 = nn.Linear(256*27*21, 1024)
-        self.fc2 = nn.Linear(1024, 512)
-        self.fc3 = nn.Linear(512, 2)
+        self.fc1 = nn.Linear(256*6*4, 512)
+        self.fc2 = nn.Linear(512, 2)
 
     def forward(self, x):
-        x = F.relu(self.conv1(x))
-        x = F.max_pool2d(x, kernel_size=2, stride=2)
-        x = F.relu(self.conv2(x))
-        x = F.max_pool2d(x, kernel_size=2, stride=2)
-        x = F.relu(self.conv3(x))
-        x = F.max_pool2d(x, kernel_size=2, stride=2)
-        x = x.view(-1, 256*27*21)
+        x = F.max_pool2d(F.relu(self.conv1(x)), (2, 2))
+        x = F.max_pool2d(F.relu(self.conv2(x)), (2, 2))
+        x = F.max_pool2d(F.relu(self.conv3(x)), (2, 2))
+        # print(x.shape)
+        x = x.view(-1, 256*6*4)
         x = F.relu(self.fc1(x))
-        x = F.relu(self.fc2(x))
-        x = self.fc3(x)
+        x = self.fc2(x)
 
         return F.softmax(x, dim=1)
