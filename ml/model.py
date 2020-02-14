@@ -7,23 +7,24 @@ class Model(nn.Module):
     def __init__(self):
         super(Model, self).__init__()
 
-        self.conv1 = nn.Conv2d(1, 64, 10)
-        self.conv2 = nn.Conv2d(64, 128, 10)
-        self.conv3 = nn.Conv2d(128, 256, 10)
+        self.conv1 = nn.Conv2d(1, 64, 5)
+        self.conv2 = nn.Conv2d(64, 128, 5)
+        self.conv3 = nn.Conv2d(128, 256, 5)
 
-        x = torch.randn(800, 640).view(-1, 1, 800, 640)
-
-        x = F.max_pool2d(F.relu(self.conv1(x)), (5, 5))
-        x = F.max_pool2d(F.relu(self.conv2(x)), (5, 5))
-        x = F.max_pool2d(F.relu(self.conv3(x)), (5, 5))
-
-        # 2048 is flattened tensor of [1, 256, 4, 2] from previous output
-        # print(x.shape)
-        self.fc1 = nn.Linear(1024, 512)
-        self.fc2 = nn.Linear(512, 2)
+        self.fc1 = nn.Linear(256*27*21, 1024)
+        self.fc2 = nn.Linear(1024, 512)
+        self.fc3 = nn.Linear(512, 2)
 
     def forward(self, x):
-        x = x.view(-1, 1024)
+        x = F.relu(self.conv1(x))
+        x = F.max_pool2d(x, kernel_size=2, stride=2)
+        x = F.relu(self.conv2(x))
+        x = F.max_pool2d(x, kernel_size=2, stride=2)
+        x = F.relu(self.conv3(x))
+        x = F.max_pool2d(x, kernel_size=2, stride=2)
+        x = x.view(-1, 256*27*21)
         x = F.relu(self.fc1(x))
-        x = self.fc2(x)
+        x = F.relu(self.fc2(x))
+        x = self.fc3(x)
+
         return F.softmax(x, dim=1)
