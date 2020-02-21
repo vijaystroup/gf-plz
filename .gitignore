@@ -3,5 +3,5 @@
 creds.json
 data
 data.npy
-!data.bz2
+!data.tar.gz
 !.gitignore

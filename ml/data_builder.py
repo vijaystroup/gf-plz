@@ -1,6 +1,10 @@
 """ The data_builder module contains the class DataBuilder which is used to
 save all our raw data to a multi-dimensional list we can load to train the
 neural network.
+
+IMPORTANT: I was originally making a dataloader myself manually with this file,
+however when I switched to using transfer learning, I update the data directory
+so I could use the PyTorch DataLoader to make the application more simple.
 """
 
 import os
@@ -48,12 +52,12 @@ class DataBuilder:
                     if height < 800:
                         im_adj = Image.new(im.mode, (640, 800))
                         im_adj.paste(im)
-                        im_adj = im_adj.resize((300, 300))
+                        # im_adj = im_adj.resize((256, 256))
                         self.data.append(
                             [np.array(im_adj), np.eye(2)[self.LABELS[label]]]
                         )
                     else:
-                        im = im.resize((300, 300))
+                        # im = im.resize((256, 256))
                         self.data.append(
                             [np.array(im), np.eye(2)[self.LABELS[label]]]
                         )
