@@ -1,4 +1,3 @@
-from model import Model
 import os
 from time import strftime
 import numpy as np
@@ -7,36 +6,53 @@ from tqdm import tqdm
 import torch
 import torch.optim as optim
 import torch.nn as nn
+from torchvision import models, transforms, datasets
+from torch.utils.data import DataLoader
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 data = np.load(f'{os.path.dirname(__file__)}/data.npy', allow_pickle=True)
-model = Model().double().to(device)
+model = models.vgg16(pretrained=True).to(device)
 optimizer = optim.Adam(model.parameters(), lr=1e-3)
-criterion = nn.MSELoss()
-BATCH_SIZE = 100
-EPOCHS = 10
-HEIGHT = 80
-WIDTH = 64
+criterion = nn.CrossEntropyLoss()
+BATCH_SIZE = 50
+EPOCHS = 1
+HEIGHT = 800
+WIDTH = 640
 
 
 def load_data():
-    X = []
-    y = []
-    for i in tqdm(data):
-        if i[0].shape == torch.Size([HEIGHT, WIDTH]): # some currupt files in dataset
-            t = torch.Tensor(i[0]).double()
-            t2 = torch.Tensor(i[1])
-            X.append(t)
-            y.append(t2)
+    mean=[0.485, 0.456, 0.406]
+    std=[0.229, 0.224, 0.225]
 
-    X = torch.stack(X).view(-1, HEIGHT, WIDTH) # make a tensor of tensors
-    X = X / 255.0 # scale pixel values to [0, 1]
-    y = torch.stack(y)
+    data_transforms = {
+        'train': transforms.Compose([
+            transforms.RandomResizedCrop(224),
+            transforms.RandomHorizontalFlip(),
+            transforms.ToTensor(),
+            transforms.Normalize(mean, std)
+        ]),
+        'val': transforms.Compose([
+            transforms.Resize(256),
+            transforms.CenterCrop(224),
+            transforms.ToTensor(),
+            transforms.Normalize(mean, std)
+        ])
+    }
 
-    return X, y
+    path = os.path.dirname(__file__)
+    data = {
+        'train': datasets.ImageFolder(f'{path}/../data/train', data_transforms['train']),
+        'val': datasets.ImageFolder(f'{path}/../data/val', data_transforms['val'])
+    }
+    dataloader = {
+        'train': DataLoader(data['train'], batch_size=BATCH_SIZE, shuffle=True),
+        'val': DataLoader(data['val'], batch_size=BATCH_SIZE, shuffle=True)
+    }
+
+    return dataloader
 
 
-def train(train_X, train_y):
+def train():
     for epoch in range(EPOCHS):
         for i in tqdm(range(0, len(train_X), BATCH_SIZE)):
             batch_X = train_X[i:i + BATCH_SIZE].double().view(-1, 1, HEIGHT, WIDTH).to(device)
@@ -69,13 +85,7 @@ def test(test_X, test_y):
 if __name__ == '__main__':
     print(f'Running on {device}')
 
-    X, y = load_data()
+    data = load_data()
 
-    VAL_SIZE = int(len(X) * 0.1) # validation percentage of the data (10%)
-    train_X = X[:-VAL_SIZE]
-    train_y = y[:-VAL_SIZE]
-    test_X = X[-VAL_SIZE:]
-    test_y = y[-VAL_SIZE:]
-
-    train(train_X, train_y)
-    test(test_X, test_y)
+    # train(data['train'])
+    # train(data['val'])
