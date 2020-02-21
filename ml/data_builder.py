@@ -48,12 +48,12 @@ class DataBuilder:
                     if height < 800:
                         im_adj = Image.new(im.mode, (640, 800))
                         im_adj.paste(im)
-                        im_adj = im_adj.resize((244, 305))
+                        im_adj = im_adj.resize((300, 300))
                         self.data.append(
                             [np.array(im_adj), np.eye(2)[self.LABELS[label]]]
                         )
                     else:
-                        im = im.resize((244, 305))
+                        im = im.resize((300, 300))
                         self.data.append(
                             [np.array(im), np.eye(2)[self.LABELS[label]]]
                         )
